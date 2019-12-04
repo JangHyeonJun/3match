@@ -46,12 +46,21 @@ public class GUIManager : MonoBehaviour {
     public int MoveCounter
     {
         get { return moveCounter; }
-        set { moveCounter = value; moveCounterTxt.text = moveCounter.ToString(); }
+        set 
+        { 
+            if(moveCounter <= 0)
+            {
+                moveCounter = 0;
+                StartCoroutine(WaitForShifting());
+            }
+            moveCounter = value; 
+            moveCounterTxt.text = moveCounter.ToString(); 
+        }
     }
 
 	void Awake() {
 		instance = GetComponent<GUIManager>();
-        moveCounter = 60;
+        moveCounter = 10;
         moveCounterTxt.text = moveCounter.ToString();
 	}
 
@@ -70,5 +79,12 @@ public class GUIManager : MonoBehaviour {
 
 		yourScoreTxt.text = score.ToString();
 	}
+
+    private IEnumerator WaitForShifting()
+    {
+        yield return new WaitUntil(() => !BoardManager.instance.IsShifting);
+        yield return new WaitForSeconds(.25f);
+        GameOver();
+    }
 
 }
