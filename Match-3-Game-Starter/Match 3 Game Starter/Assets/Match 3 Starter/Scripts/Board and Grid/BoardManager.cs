@@ -80,7 +80,7 @@ public class BoardManager : MonoBehaviour {
                 }
     }
 
-    private IEnumerator ShiftTilesDown(int x, int yStart, float shiftDelay = .03f)
+    private IEnumerator ShiftTilesDown(int x, int yStart, float shiftDelay = .09f)
     {
         IsShifting = true;
         List<SpriteRenderer> renders = new List<SpriteRenderer>();
@@ -100,10 +100,24 @@ public class BoardManager : MonoBehaviour {
             for(int j=0; j<renders.Count-1; j++)
             {
                 renders[j].sprite = renders[j + 1].sprite;
-                renders[j + 1].sprite = null;
+                renders[j + 1].sprite = GetNewSprite(x, ySize-1);
             }
         }
         IsShifting = false;
     }
 
+    private Sprite GetNewSprite(int x, int y)
+    {
+        List<Sprite> possibleCharacters = new List<Sprite>();
+        possibleCharacters.AddRange(characters);
+
+        if (x > 0)
+            possibleCharacters.Remove(tiles[x - 1, y].GetComponent<SpriteRenderer>().sprite);
+        if (x < xSize - 1)
+            possibleCharacters.Remove(tiles[x + 1, y].GetComponent<SpriteRenderer>().sprite);
+        if (y > 0)
+            possibleCharacters.Remove(tiles[x, y - 1].GetComponent<SpriteRenderer>().sprite);
+
+        return possibleCharacters[Random.Range(0, possibleCharacters.Count)];
+    }
 }
