@@ -101,6 +101,7 @@ public class BoardManager : MonoBehaviour {
         for(int i=0; i<nullCount; i++)
         {
             yield return new WaitForSeconds(shiftDelay);
+            GUIManager.instance.Score += 50;
             for(int j=0; j<renders.Count-1; j++)
             {
                 renders[j].sprite = renders[j + 1].sprite;
