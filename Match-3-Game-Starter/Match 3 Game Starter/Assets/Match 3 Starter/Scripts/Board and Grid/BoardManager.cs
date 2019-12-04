@@ -69,4 +69,41 @@ public class BoardManager : MonoBehaviour {
         }
     }
 
+    public IEnumerator FindNullTiles()
+    {
+        for(int x=0; x<xSize; x++)
+            for(int y=0; y<ySize; y++)
+                if(tiles[x,y].GetComponent<SpriteRenderer>().sprite == null)
+                {
+                    yield return StartCoroutine(ShiftTilesDown(x, y));
+                    break;
+                }
+    }
+
+    private IEnumerator ShiftTilesDown(int x, int yStart, float shiftDelay = .03f)
+    {
+        IsShifting = true;
+        List<SpriteRenderer> renders = new List<SpriteRenderer>();
+        int nullCount = 0;
+
+        for(int y=yStart; y<ySize; y++)
+        {
+            SpriteRenderer render = tiles[x, y].GetComponent<SpriteRenderer>();
+            if (render.sprite == null)
+                nullCount++;
+            renders.Add(render);
+        }
+
+        for(int i=0; i<nullCount; i++)
+        {
+            yield return new WaitForSeconds(shiftDelay);
+            for(int j=0; j<renders.Count-1; j++)
+            {
+                renders[j].sprite = renders[j + 1].sprite;
+                renders[j + 1].sprite = null;
+            }
+        }
+        IsShifting = false;
+    }
+
 }
